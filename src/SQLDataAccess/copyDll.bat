@@ -1,0 +1,1 @@
+copy /y "D:\MyWork\RND\AngularJS\MyCalculator.Api\src\SQLDataAccess\bin\Debug\netstandard1.6\SQLDataAccess.dll", "D:\MyWork\RND\AngularJS\MyCalculator.Api\src\Api\bin\Debug\netcoreapp1.0"
