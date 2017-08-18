@@ -32,7 +32,7 @@ namespace Api.Controllers
         }
 
         [HttpGet()]
-        [Auth.Authorize()]
+        //[Auth.Authorize()]
         [Route("listTaxSlabs")]
         public FeaturedTaxSlabViewModel ListTaxSlabs()
         {
