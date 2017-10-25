@@ -34,9 +34,9 @@ namespace Api.Controllers
         [HttpGet()]
         //[Auth.Authorize()]
         [Route("listTaxSlabs")]
-        public FeaturedTaxSlabViewModel ListTaxSlabs()
+        public FeaturedTaxSlabListViewModel ListTaxSlabs()
         {
-            var vmTaxSlab = new FeaturedTaxSlabViewModel();
+            var vmTaxSlab = new FeaturedTaxSlabListViewModel();
 
             var taxSlabs = _taxSlabBL.GetTaxSlabs();
 

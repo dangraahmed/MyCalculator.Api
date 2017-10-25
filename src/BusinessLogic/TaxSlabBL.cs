@@ -31,7 +31,7 @@ namespace BusinessLogic
             return _repository.GetTaxSlabDetail(taxSlabId);
         }
 
-        public bool InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
+        public int InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
         {
             return _repository.InsertUpdateTaxSlab(taxSlab, taxSlabDetails);
         }

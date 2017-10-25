@@ -39,8 +39,8 @@ namespace ApiTest.Controllers
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<FeaturedTaxSlabDetailViewModel>(result);
-            Assert.IsType<TaxSlabViewModel>(result.TaxSlab);
+            Assert.IsType<FeaturedTaxSlabDetailListViewModel>(result);
+            //Assert.IsType<TaxSlabViewModel>(result.TaxSlab);
             Assert.IsType<List<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.IsAssignableFrom<IEnumerable<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.Equal(taxSlabDetailCount, result.TaxSlabDetail.Count());
@@ -63,8 +63,8 @@ namespace ApiTest.Controllers
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<FeaturedTaxSlabDetailViewModel>(result);
-            Assert.Null(result.TaxSlab);
+            Assert.IsType<FeaturedTaxSlabDetailListViewModel>(result);
+            //Assert.Null(result.TaxSlab);
             Assert.IsType<List<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.IsAssignableFrom<IEnumerable<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.Equal(taxSlabDetailCount, result.TaxSlabDetail.Count());
@@ -82,8 +82,8 @@ namespace ApiTest.Controllers
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<FeaturedTaxSlabDetailViewModel>(result);
-            Assert.NotNull(result.TaxSlab);
+            Assert.IsType<FeaturedTaxSlabDetailListViewModel>(result);
+            //Assert.NotNull(result.TaxSlab);
             Assert.IsType<List<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.IsAssignableFrom<IEnumerable<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.Equal(taxSlabDetailCount, result.TaxSlabDetail.Count());

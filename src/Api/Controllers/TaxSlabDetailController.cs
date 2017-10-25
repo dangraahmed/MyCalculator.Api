@@ -30,13 +30,11 @@ namespace Api.Controllers
         }
 
         [HttpGet()]
-        [Auth.Authorize()]
+        //[Auth.Authorize()]
         [Route("listTaxSlabDetail/{id}")]
-        public FeaturedTaxSlabDetailViewModel ListTaxSlabDetail(int id)
+        public FeaturedTaxSlabDetailListViewModel ListTaxSlabDetail(int id)
         {
-            var vmTaxSlabDetail = new FeaturedTaxSlabDetailViewModel();
-
-            vmTaxSlabDetail.TaxSlab = _mapper.Map<TaxSlabViewModel>(_taxSlabBL.GetTaxSlabs().FirstOrDefault(slab => slab.Id == id));
+            var vmTaxSlabDetail = new FeaturedTaxSlabDetailListViewModel();
 
             var taxSlabDetail = _taxSlabBL.GetTaxSlabDetail(id);
 
@@ -46,7 +44,6 @@ namespace Api.Controllers
             }
 
             if (id != -1) return vmTaxSlabDetail;
-            vmTaxSlabDetail.TaxSlab = new TaxSlabViewModel() { Id = id};
             vmTaxSlabDetail.TaxSlabDetail.Add(new TaxSlabDetailViewModel());
             vmTaxSlabDetail.TaxSlabDetail.Add(new TaxSlabDetailViewModel());
             vmTaxSlabDetail.TaxSlabDetail.Add(new TaxSlabDetailViewModel());
@@ -63,20 +60,43 @@ namespace Api.Controllers
         }
 
         [HttpPost()]
-        [Auth.Authorize()]
+        //[Auth.Authorize()]
         [Route("insertUpdateTaxSlab")]
-        public bool InsertUpdateTaxSlab([FromBody] FeaturedTaxSlabDetailViewModel featuredTaxSlabDetailViewModel)
+        public FeaturedTaxSlabViewModel InsertUpdateTaxSlab([FromBody] FeaturedTaxSlabViewModel featuredTaxSlabViewModel)
         {
             try
             {
-                return _taxSlabBL.InsertUpdateTaxSlab(_mapper.Map<TaxSlab>(featuredTaxSlabDetailViewModel.TaxSlab), _mapper.Map<IList<TaxSlabDetail>>(featuredTaxSlabDetailViewModel.TaxSlabDetail));
+                // TODO: -- have to remove this code (from here)
+                TaxSlabViewModel taxSlabViewModel = new TaxSlabViewModel();
+                taxSlabViewModel.Id = featuredTaxSlabViewModel.Id;
+                taxSlabViewModel.FromYear = featuredTaxSlabViewModel.FromYear;
+                taxSlabViewModel.ToYear = featuredTaxSlabViewModel.ToYear;
+                taxSlabViewModel.Category = featuredTaxSlabViewModel.Category;
+                // TODO: -- have to remove this code (till here)
+
+                int taxSlabId = _taxSlabBL.InsertUpdateTaxSlab(_mapper.Map<TaxSlab>(taxSlabViewModel)
+                                                    , _mapper.Map<IList<TaxSlabDetail>>(featuredTaxSlabViewModel.TaxSlabDetail));
+                {
+                    var taxSlab = _mapper.Map<TaxSlabViewModel>(_taxSlabBL.GetTaxSlabs().FirstOrDefault(slab => slab.Id == taxSlabId));
+                    var taxSlabDetail = _mapper.Map<IList<TaxSlabDetailViewModel>>(this.ListTaxSlabDetail(taxSlabId).TaxSlabDetail);
+
+                    var retTaxSlabViewModel = new FeaturedTaxSlabViewModel();
+                    retTaxSlabViewModel.Id = taxSlab.Id;
+                    retTaxSlabViewModel.FromYear = taxSlab.FromYear;
+                    retTaxSlabViewModel.ToYear = taxSlab.ToYear;
+                    retTaxSlabViewModel.Category = taxSlab.Category;
+
+                    foreach (var detail in taxSlabDetail)
+                    {
+                        retTaxSlabViewModel.TaxSlabDetail.Add(detail);
+                    }
+                    return retTaxSlabViewModel;
+                }
             }
             catch (Exception es)
             {
-
                 throw;
             }
-            
         }
     }
 }

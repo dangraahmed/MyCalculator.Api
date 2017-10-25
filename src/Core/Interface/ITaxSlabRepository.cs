@@ -10,7 +10,7 @@ namespace Core.Interface
     {
         IEnumerable<TaxSlab> GetTaxSlabs();
         IEnumerable<TaxSlabDetail> GetTaxSlabDetail(int taxSlabId);
-        bool InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails);
+        int InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails);
         bool DeleteTaxSlab(int taxSlabId);
     }
 }

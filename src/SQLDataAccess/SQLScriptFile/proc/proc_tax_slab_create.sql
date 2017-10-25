@@ -11,11 +11,12 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[proc_tax_slab_create]
+ALTER PROCEDURE [dbo].[proc_tax_slab_create]
 	@from_year int,
 	@to_year int,
 	@category varchar(50),
-	@tax_slab_details varchar(max)
+	@tax_slab_details varchar(max),
+	@id int out
 AS
 BEGIN
 
@@ -60,6 +61,8 @@ SELECT	'Return Value' = @return_value
 			to_amount INT 'SlabToAmount',
 			percentage INT 'Percentage')
 		
+		SET @id = @TaxSlabId
+
 		COMMIT
 	
 	END TRY  

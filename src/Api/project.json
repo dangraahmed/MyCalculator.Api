@@ -21,7 +21,8 @@
     "AutoMapper": "5.2.0",
     "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0",
     "Microsoft.EntityFrameworkCore.SqlServer": "1.1.1", // TODO: -- have to remove this reference
-    "Autofac.Extensions.DependencyInjection": "4.0.0"
+    "Autofac.Extensions.DependencyInjection": "4.0.0",
+    "System.Xml.XmlSerializer": "4.3.0" // TODO: -- have to remove this reference
   },
 
   "tools": {

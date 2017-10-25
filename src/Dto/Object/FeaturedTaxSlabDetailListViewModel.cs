@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Dto.Object
 {
-    public class FeaturedTaxSlabViewModel : TaxSlabViewModel
+    public class FeaturedTaxSlabDetailListViewModel
     {
         private readonly List<TaxSlabDetailViewModel> _taxSlabDetail;
 
-        public FeaturedTaxSlabViewModel()
+        public FeaturedTaxSlabDetailListViewModel()
         {
             this._taxSlabDetail = new List<TaxSlabDetailViewModel>();
         }

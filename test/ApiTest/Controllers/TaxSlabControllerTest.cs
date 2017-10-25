@@ -32,7 +32,7 @@ namespace ApiTest.Controllers
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<FeaturedTaxSlabViewModel>(result);
+            Assert.IsType<FeaturedTaxSlabListViewModel>(result);
             Assert.IsType<List<TaxSlabViewModel>>(result.TaxSlabs);
             Assert.IsAssignableFrom<IEnumerable<TaxSlabViewModel>>(result.TaxSlabs);
             Assert.Equal(dataModelRepositoryTest.TaxSlabTestData.Count, result.TaxSlabs.Count());

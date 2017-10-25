@@ -123,11 +123,12 @@ namespace SQLDataAccess.Repository
             return taxSlabDetail;
         }
 
-        public bool InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
+        public int InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
         {
             try
             {
                 string taxSlabDetail = taxSlabDetails.Serialize();
+                int taxSlabId;
                 using (var connection = new SqlConnection(_connectionString))
                 {
                     connection.Open();
@@ -140,6 +141,8 @@ namespace SQLDataAccess.Repository
                         if (taxSlab.Id == -1)
                         {
                             command.CommandText = "proc_tax_slab_create";
+                            command.Parameters.Add("@id");
+                            command.Parameters["@id"].Direction = ParameterDirection.Output;
                         }
                         else
                         {
@@ -152,14 +155,16 @@ namespace SQLDataAccess.Repository
                         command.Parameters.AddWithValue("@category", taxSlab.Category);
                         command.Parameters.AddWithValue("@tax_slab_details", taxSlabDetail);
 
-                        var reader = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
+
+                        taxSlabId = Convert.ToInt32(command.Parameters["@id"].Value);
                     }
                 }
-                return true;
+                return taxSlabId;
             }
             catch (Exception ex)
             {
-                return false;
+                return 0;
             }
         }
     }
