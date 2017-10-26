@@ -141,7 +141,7 @@ namespace SQLDataAccess.Repository
                         if (taxSlab.Id == -1)
                         {
                             command.CommandText = "proc_tax_slab_create";
-                            command.Parameters.Add("@id");
+                            command.Parameters.Add("@id", SqlDbType.Int);
                             command.Parameters["@id"].Direction = ParameterDirection.Output;
                         }
                         else

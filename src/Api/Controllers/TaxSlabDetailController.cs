@@ -66,7 +66,8 @@ namespace Api.Controllers
         {
             try
             {
-                // TODO: -- have to remove this code (from here)
+                // TODO: -- have to remove this  code (from here)
+                // TODO : refactoring required remove duplicate code
                 TaxSlabViewModel taxSlabViewModel = new TaxSlabViewModel();
                 taxSlabViewModel.Id = featuredTaxSlabViewModel.Id;
                 taxSlabViewModel.FromYear = featuredTaxSlabViewModel.FromYear;
