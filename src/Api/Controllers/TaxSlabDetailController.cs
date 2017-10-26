@@ -52,7 +52,7 @@ namespace Api.Controllers
         }
 
         [HttpPost()]
-        [Auth.Authorize()]
+        //[Auth.Authorize()]
         [Route("deleteTaxSlab/{id}")]
         public bool DeleteTaxSlab(int id)
         {
