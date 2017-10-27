@@ -16,7 +16,7 @@ namespace ApiTest.Controllers
     {
         private TaxSlabRepositoryTestImp dataModelRepositoryTest;
         private Mock<ITaxSlabBL> mockTaxSlabBL;
-        private TaxSlabDetailController controller;
+        private TaxSlabController controller;
 
         public TaxSlabDetailControllerTest()
         {
@@ -40,7 +40,6 @@ namespace ApiTest.Controllers
             // Assert
             Assert.NotNull(result);
             Assert.IsType<FeaturedTaxSlabDetailListViewModel>(result);
-            //Assert.IsType<TaxSlabViewModel>(result.TaxSlab);
             Assert.IsType<List<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.IsAssignableFrom<IEnumerable<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.Equal(taxSlabDetailCount, result.TaxSlabDetail.Count());
@@ -64,34 +63,9 @@ namespace ApiTest.Controllers
             // Assert
             Assert.NotNull(result);
             Assert.IsType<FeaturedTaxSlabDetailListViewModel>(result);
-            //Assert.Null(result.TaxSlab);
             Assert.IsType<List<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.IsAssignableFrom<IEnumerable<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.Equal(taxSlabDetailCount, result.TaxSlabDetail.Count());
-        }
-
-        [Theory]
-        [InlineData(-1, 3), TestPriority(2)]
-        public void ListTaxSlabDetailTestForAddMode(int taxSlabId, int taxSlabDetailCount)
-        {
-            //Arrange
-            mockTaxSlabBL.Setup(repo => repo.GetTaxSlabDetail(taxSlabId)).Returns(dataModelRepositoryTest.GetTaxSlabDetail(taxSlabId));
-
-            // Act
-            var result = controller.ListTaxSlabDetail(taxSlabId);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsType<FeaturedTaxSlabDetailListViewModel>(result);
-            //Assert.NotNull(result.TaxSlab);
-            Assert.IsType<List<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
-            Assert.IsAssignableFrom<IEnumerable<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
-            Assert.Equal(taxSlabDetailCount, result.TaxSlabDetail.Count());
-
-            foreach (var taxSlabDetail in result.TaxSlabDetail)
-            {
-                Assert.NotNull(taxSlabDetail);
-            }
         }
 
         [Theory]
@@ -116,7 +90,7 @@ namespace ApiTest.Controllers
         }
 
         [Theory]
-        [InlineData(10, 4), TestPriority(4)]
+        [InlineData(-10, 4), TestPriority(4)]
         public void DeleteTaxSlabTestInValidTaxSlabId(int taxSlabId, int taxSlabDetailCount)
         {
             //Arrange
@@ -136,7 +110,7 @@ namespace ApiTest.Controllers
             mockTaxSlabBL = new Mock<ITaxSlabBL>();
             mockTaxSlabBL.Setup(repo => repo.GetTaxSlabs()).Returns(dataModelRepositoryTest.GetTaxSlabs());
             Mapper.Initialize(m => m.AddProfile<CoreToDto>());
-            controller = new TaxSlabDetailController(mockTaxSlabBL.Object, Mapper.Instance);
+            controller = new TaxSlabController(mockTaxSlabBL.Object, Mapper.Instance);
         }
     }
 }

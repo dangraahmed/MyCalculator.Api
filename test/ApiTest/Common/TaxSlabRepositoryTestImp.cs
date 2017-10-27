@@ -24,16 +24,16 @@ namespace ApiTest.Common
         {
             try
             {
-                TaxSlabTestData.RemoveAll(tax => tax.Id == taxSlabId);
-                TaxSlabDetailTestData.RemoveAll(tax => tax.TaxSlabId == taxSlabId);
-                return true;
+                int taxSlabCount = TaxSlabTestData.RemoveAll(tax => tax.Id == taxSlabId);
+                int taxSlabDetailCount = TaxSlabDetailTestData.RemoveAll(tax => tax.TaxSlabId == taxSlabId);
+                return Convert.ToBoolean(taxSlabCount + taxSlabDetailCount);
             }
             catch (Exception)
             {
                 return false;
             }
         }
-        
+
         public IEnumerable<TaxSlabDetail> GetTaxSlabDetail(int taxSlabId)
         {
             return TaxSlabDetailTestData.Where(tax => tax.TaxSlabId == taxSlabId);
@@ -43,8 +43,8 @@ namespace ApiTest.Common
         {
             return TaxSlabTestData;
         }
-                
-        public bool InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
+
+        public int InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
         {
             throw new NotImplementedException();
         }
