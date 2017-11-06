@@ -11,10 +11,19 @@ namespace MongoDataAccess
 {
 
     [BsonIgnoreExtraElements]
-    public class TTaxSlab : TaxSlab
+    public class TTaxSlab
     {
-        [BsonIgnore]
-        public ObjectId _id { get; set; }
+        [BsonElement("Id")]
+        public int Id1 { get; set; }
+
+        [BsonElement("FromYear")]
+        public int FromYear { get; set; }
+
+        [BsonElement("ToYear")]
+        public int ToYear { get; set; }
+
+        [BsonElement("Category")]
+        public string Category { get; set; }
     }
 
 
