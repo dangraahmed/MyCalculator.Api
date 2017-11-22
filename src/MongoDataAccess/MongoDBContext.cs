@@ -3,30 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Model;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using MongoDataAccess.Model;
 
 namespace MongoDataAccess
 {
-
-    [BsonIgnoreExtraElements]
-    public class TTaxSlab
-    {
-        [BsonElement("Id")]
-        public int Id1 { get; set; }
-
-        [BsonElement("FromYear")]
-        public int FromYear { get; set; }
-
-        [BsonElement("ToYear")]
-        public int ToYear { get; set; }
-
-        [BsonElement("Category")]
-        public string Category { get; set; }
-    }
-
-
     public class MongoDBContext
     {
         private IMongoDatabase _database { get; }
@@ -49,12 +30,14 @@ namespace MongoDataAccess
             }
         }
 
-        public IMongoCollection<TTaxSlab> TaxSlab
+        public IMongoCollection<MdTaxSlab> TaxSlab
         {
             get
             {
-                return _database.GetCollection<TTaxSlab>("tax_slab");
+                return _database.GetCollection<MdTaxSlab>("tax_slab");
             }
         }
+
+        public IMongoCollection<MdTaxSlabDetail> TaxSlabDetails => _database.GetCollection<MdTaxSlabDetail>("tax_slab_details");
     }
 }
