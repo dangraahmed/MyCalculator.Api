@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.Interface;
 using Core.Model;
 using MongoDataAccess.Model;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -21,7 +22,17 @@ namespace MongoDataAccess.Repository
 
         public bool DeleteTaxSlab(int taxSlabId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _mongoDBContext.TaxSlab.DeleteOne(a => a.Id == taxSlabId);
+                _mongoDBContext.TaxSlabDetails.DeleteMany(a => a.TaxSlabId == taxSlabId);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
         }
 
         public IEnumerable<TaxSlabDetail> GetTaxSlabDetail(int taxSlabId)
@@ -66,10 +77,14 @@ namespace MongoDataAccess.Repository
         {
             if (taxSlab.Id == -1)
             {
-                var lastTaxSlab = _mongoDBContext.TaxSlab.Aggregate().SortByDescending((a) => a.Id).FirstAsync();
+
+                var query = _mongoDBContext.TaxSlab.AsQueryable().OrderByDescending(a => a.Id).FirstOrDefault();
+                    
+
+                //var lastTaxSlab = _mongoDBContext.TaxSlab.Aggregate().SortByDescending((a) => a.Id).FirstAsync();
                 var mdTaxSlab = new MdTaxSlab()
                 {
-                    Id = Convert.ToInt32(lastTaxSlab.Id) + 1,
+                    Id = Convert.ToInt32(query.Id) + 1,
                     FromYear = taxSlab.FromYear,
                     ToYear = taxSlab.ToYear,
                     Category = taxSlab.Category
@@ -77,7 +92,7 @@ namespace MongoDataAccess.Repository
 
                 _mongoDBContext.TaxSlab.InsertOneAsync(mdTaxSlab);
 
-                var lastTaxSlabDetails = _mongoDBContext.TaxSlabDetails.Aggregate().SortByDescending((a) => a.Id).FirstAsync();
+                var lastTaxSlabDetails = _mongoDBContext.TaxSlabDetails.AsQueryable().OrderByDescending(a => a.Id).FirstOrDefault();
                 int index = 0;
                 foreach (var taxSlabDetail in taxSlabDetails)
                 {
@@ -92,6 +107,8 @@ namespace MongoDataAccess.Repository
 
                     _mongoDBContext.TaxSlabDetails.InsertOneAsync(mdTaxSlabDetail);
                 }
+
+                return mdTaxSlab.Id;
             }
 
             return 0;
