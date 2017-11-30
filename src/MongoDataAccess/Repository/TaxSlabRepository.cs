@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Core.Interface;
 using Core.Model;
 using MongoDataAccess.Model;
@@ -13,19 +14,22 @@ namespace MongoDataAccess.Repository
 {
     public class TaxSlabRepository : ITaxSlabRepository
     {
-        private readonly MongoDBContext _mongoDBContext;
+        private readonly MongoDBContext _mongoDbContext;
+        private IMongoQueryable<MdTaxSlabDetail> _taxSlabDetails => _mongoDbContext.TaxSlabDetails.AsQueryable();
+        private IMongoQueryable<MdTaxSlab> _taxSlab => _mongoDbContext.TaxSlab.AsQueryable();
+        private IMapper _mapper => AutoMapperInit.Configuration();
 
         public TaxSlabRepository(string connectionString)
         {
-            _mongoDBContext = new MongoDBContext(connectionString, "my_calculator", true);
+            _mongoDbContext = new MongoDBContext(connectionString, "my_calculator", true);
         }
 
         public bool DeleteTaxSlab(int taxSlabId)
         {
             try
             {
-                _mongoDBContext.TaxSlab.DeleteOne(a => a.Id == taxSlabId);
-                _mongoDBContext.TaxSlabDetails.DeleteMany(a => a.TaxSlabId == taxSlabId);
+                _mongoDbContext.TaxSlab.DeleteOne(a => a.Id == taxSlabId);
+                _mongoDbContext.TaxSlabDetails.DeleteMany(a => a.TaxSlabId == taxSlabId);
                 return true;
             }
             catch (Exception)
@@ -37,18 +41,10 @@ namespace MongoDataAccess.Repository
 
         public IEnumerable<TaxSlabDetail> GetTaxSlabDetail(int taxSlabId)
         {
-            var taxSlabDetail = new List<TaxSlabDetail>(); // TODO : Auto mapper need to implemented
-
-            foreach (var employee in _mongoDBContext.TaxSlabDetails.AsQueryable().Where(x => x.TaxSlabId == taxSlabId))
+            var taxSlabDetail = new List<TaxSlabDetail>();
+            foreach (var employee in this._taxSlabDetails.Where(x => x.TaxSlabId == taxSlabId))
             {
-                taxSlabDetail.Add(new TaxSlabDetail()
-                {
-                    Id = employee.Id,
-                    TaxSlabId = employee.TaxSlabId,
-                    SlabFromAmount = employee.SlabFromAmount,
-                    SlabToAmount = employee.SlabToAmount,
-                    Percentage = employee.Percentage
-                });
+                taxSlabDetail.Add(_mapper.Map<TaxSlabDetail>(employee));
             }
 
             return taxSlabDetail;
@@ -56,18 +52,11 @@ namespace MongoDataAccess.Repository
 
         public IEnumerable<TaxSlab> GetTaxSlabs()
         {
+            var taxSlabs = new List<TaxSlab>();
 
-            var taxSlabs = new List<TaxSlab>(); // TODO : Auto mapper need to implemented
-
-            foreach (var employee in _mongoDBContext.TaxSlab.AsQueryable())
+            foreach (var tax in this._taxSlab)
             {
-                taxSlabs.Add(new TaxSlab()
-                {
-                    Id = employee.Id,
-                    FromYear = employee.FromYear,
-                    ToYear = employee.ToYear,
-                    Category = employee.Category
-                });
+                taxSlabs.Add(_mapper.Map<TaxSlab>(tax));
             }
 
             return taxSlabs;
@@ -80,31 +69,23 @@ namespace MongoDataAccess.Repository
 
         private int InsertTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
         {
-            var query = _mongoDBContext.TaxSlab.AsQueryable().OrderByDescending(a => a.Id).FirstOrDefault();
-            var mdTaxSlab = new MdTaxSlab()
-            {
-                Id = Convert.ToInt32(query.Id) + 1,
-                FromYear = taxSlab.FromYear,
-                ToYear = taxSlab.ToYear,
-                Category = taxSlab.Category
-            };
+            // taxSlab insertion
+            var taxSlabId = this._taxSlab.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
+            var mdTaxSlab = _mapper.Map<MdTaxSlab>(taxSlab);
 
-            _mongoDBContext.TaxSlab.InsertOneAsync(mdTaxSlab);
+            mdTaxSlab.Id = Convert.ToInt32(taxSlabId) + 1;
+            _mongoDbContext.TaxSlab.InsertOneAsync(mdTaxSlab);
 
-            var lastTaxSlabDetails = _mongoDBContext.TaxSlabDetails.AsQueryable().OrderByDescending(a => a.Id).FirstOrDefault();
-            var index = 0;
+            // taxSlabDetails insertion
+            var taxSlabDetailsId = this._taxSlabDetails.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
+            var index = 1;
             foreach (var taxSlabDetail in taxSlabDetails)
             {
-                var mdTaxSlabDetail = new MdTaxSlabDetail()
-                {
-                    Id = lastTaxSlabDetails.Id + index++,
-                    TaxSlabId = mdTaxSlab.Id,
-                    Percentage = taxSlabDetail.Percentage,
-                    SlabFromAmount = taxSlabDetail.SlabFromAmount,
-                    SlabToAmount = taxSlabDetail.SlabToAmount
-                };
+                var mdTaxSlabDetail = _mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
 
-                _mongoDBContext.TaxSlabDetails.InsertOneAsync(mdTaxSlabDetail);
+                mdTaxSlabDetail.Id = taxSlabDetailsId + index++;
+                mdTaxSlabDetail.TaxSlabId = mdTaxSlab.Id;
+                _mongoDbContext.TaxSlabDetails.InsertOneAsync(mdTaxSlabDetail);
             }
 
             return mdTaxSlab.Id;
@@ -112,67 +93,46 @@ namespace MongoDataAccess.Repository
 
         private int UpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
         {
+            // first update taxSlab
+            var mdTaxSlab = _mapper.Map<MdTaxSlab>(taxSlab);
+            mdTaxSlab._id = new ObjectId(this._taxSlab.FirstOrDefault(x => x.Id == taxSlab.Id)._id.ToString());
 
-            var mdTaxSlab = new MdTaxSlab()
-            {
-                _id = new ObjectId(_mongoDBContext.TaxSlab.AsQueryable().FirstOrDefault(x => x.Id == taxSlab.Id)._id.ToString()),
-                Id = taxSlab.Id,
-                FromYear = taxSlab.FromYear,
-                ToYear = taxSlab.ToYear,
-                Category = taxSlab.Category
-            };
+            _mongoDbContext.TaxSlab.ReplaceOneAsync(s => s.Id == mdTaxSlab.Id, mdTaxSlab);
 
-            _mongoDBContext.TaxSlab.ReplaceOneAsync(s => s.Id == mdTaxSlab.Id, mdTaxSlab);
 
+            // delete taxSlabDetails from database which are not passed by user
             var slabDetails = taxSlabDetails as TaxSlabDetail[] ?? taxSlabDetails.ToArray();
             var ids = new HashSet<int>(slabDetails.Select(x => x.Id));
-            var results = _mongoDBContext.TaxSlabDetails.AsQueryable().Where(x => !ids.Contains(x.Id) && x.TaxSlabId == mdTaxSlab.Id);
+            var results = this._taxSlabDetails.Where(x => !ids.Contains(x.Id) && x.TaxSlabId == mdTaxSlab.Id);
 
             foreach (var mdTaxSlabDetail in results)
             {
-                _mongoDBContext.TaxSlabDetails.DeleteOne(det => det.Id == mdTaxSlabDetail.Id);
+                _mongoDbContext.TaxSlabDetails.DeleteOne(det => det.Id == mdTaxSlabDetail.Id);
             }
 
-            var lastTaxSlabDetails = _mongoDBContext.TaxSlabDetails.AsQueryable().OrderByDescending(a => a.Id).FirstOrDefault();
+            // taxSlabDetails update or insert.
+            var taxSlabDetailsId = this._taxSlabDetails.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
             var index = 1;
             foreach (var taxSlabDetail in slabDetails)
             {
                 if (taxSlabDetail.Id == -1)
                 {
                     // Insert new entry in database
+                    var mdTaxSlabDetail = _mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
+                    mdTaxSlabDetail.Id = taxSlabDetailsId + index++;
+                    mdTaxSlabDetail.TaxSlabId = mdTaxSlab.Id;
 
-                    var mdTaxSlabDetail = new MdTaxSlabDetail()
-                    {
-                        Id = lastTaxSlabDetails.Id + index++,
-                        TaxSlabId = mdTaxSlab.Id,
-                        Percentage = taxSlabDetail.Percentage,
-                        SlabFromAmount = taxSlabDetail.SlabFromAmount,
-                        SlabToAmount = taxSlabDetail.SlabToAmount
-                    };
-
-                    _mongoDBContext.TaxSlabDetails.InsertOneAsync(mdTaxSlabDetail);
+                    _mongoDbContext.TaxSlabDetails.InsertOneAsync(mdTaxSlabDetail);
                 }
-                else if (_mongoDBContext.TaxSlabDetails.AsQueryable().Any(det => det.Id == taxSlabDetail.Id))
+                else if (this._taxSlabDetails.Any(det => det.Id == taxSlabDetail.Id))
                 {
                     // taxSlabDetail exist in database so update it
+                    var mdTaxSlabDetail = _mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
+                    mdTaxSlabDetail._id = new ObjectId(this._taxSlabDetails.FirstOrDefault(x => x.Id == taxSlabDetail.Id)._id.ToString());
+                    mdTaxSlabDetail.TaxSlabId = mdTaxSlab.Id;
 
-                    var mdTaxSlabDetail = new MdTaxSlabDetail()
-                    {
-                        _id = new ObjectId(_mongoDBContext.TaxSlabDetails.AsQueryable().FirstOrDefault(x => x.Id == taxSlabDetail.Id)._id.ToString()),
-                        Id = taxSlabDetail.Id,
-                        TaxSlabId = mdTaxSlab.Id,
-                        Percentage = taxSlabDetail.Percentage,
-                        SlabFromAmount = taxSlabDetail.SlabFromAmount,
-                        SlabToAmount = taxSlabDetail.SlabToAmount
-                    };
-
-                    _mongoDBContext.TaxSlabDetails.ReplaceOne(s => s.Id == mdTaxSlabDetail.Id, mdTaxSlabDetail);
+                    _mongoDbContext.TaxSlabDetails.ReplaceOne(s => s.Id == mdTaxSlabDetail.Id, mdTaxSlabDetail);
                 }
-                //else
-                //{
-                //    // taxSlabDetail don't exist in database so delete it
-                //    _mongoDBContext.TaxSlabDetails.DeleteOne(det => det.Id == taxSlabDetail.Id);
-                //}
             }
 
             return mdTaxSlab.Id;
