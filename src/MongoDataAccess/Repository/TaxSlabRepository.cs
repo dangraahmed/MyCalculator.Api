@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Core.Interface;
 using Core.Model;
@@ -15,9 +14,9 @@ namespace MongoDataAccess.Repository
     public class TaxSlabRepository : ITaxSlabRepository
     {
         private readonly MongoDBContext _mongoDbContext;
-        private IMongoQueryable<MdTaxSlabDetail> _taxSlabDetails => _mongoDbContext.TaxSlabDetails.AsQueryable();
-        private IMongoQueryable<MdTaxSlab> _taxSlab => _mongoDbContext.TaxSlab.AsQueryable();
-        private IMapper _mapper => AutoMapperInit.Configuration();
+        private IMongoQueryable<MdTaxSlabDetail> TaxSlabDetails => _mongoDbContext.TaxSlabDetails.AsQueryable();
+        private IMongoQueryable<MdTaxSlab> TaxSlab => _mongoDbContext.TaxSlab.AsQueryable();
+        private static IMapper Mapper => AutoMapperInit.Configuration();
 
         public TaxSlabRepository(string connectionString)
         {
@@ -42,9 +41,9 @@ namespace MongoDataAccess.Repository
         public IEnumerable<TaxSlabDetail> GetTaxSlabDetail(int taxSlabId)
         {
             var taxSlabDetail = new List<TaxSlabDetail>();
-            foreach (var employee in this._taxSlabDetails.Where(x => x.TaxSlabId == taxSlabId))
+            foreach (var employee in this.TaxSlabDetails.Where(x => x.TaxSlabId == taxSlabId))
             {
-                taxSlabDetail.Add(_mapper.Map<TaxSlabDetail>(employee));
+                taxSlabDetail.Add(Mapper.Map<TaxSlabDetail>(employee));
             }
 
             return taxSlabDetail;
@@ -54,9 +53,9 @@ namespace MongoDataAccess.Repository
         {
             var taxSlabs = new List<TaxSlab>();
 
-            foreach (var tax in this._taxSlab)
+            foreach (var tax in this.TaxSlab)
             {
-                taxSlabs.Add(_mapper.Map<TaxSlab>(tax));
+                taxSlabs.Add(Mapper.Map<TaxSlab>(tax));
             }
 
             return taxSlabs;
@@ -70,18 +69,18 @@ namespace MongoDataAccess.Repository
         private int InsertTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
         {
             // taxSlab insertion
-            var taxSlabId = this._taxSlab.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
-            var mdTaxSlab = _mapper.Map<MdTaxSlab>(taxSlab);
+            var taxSlabId = this.TaxSlab.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
+            var mdTaxSlab = Mapper.Map<MdTaxSlab>(taxSlab);
 
             mdTaxSlab.Id = Convert.ToInt32(taxSlabId) + 1;
             _mongoDbContext.TaxSlab.InsertOneAsync(mdTaxSlab);
 
             // taxSlabDetails insertion
-            var taxSlabDetailsId = this._taxSlabDetails.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
+            var taxSlabDetailsId = this.TaxSlabDetails.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
             var index = 1;
             foreach (var taxSlabDetail in taxSlabDetails)
             {
-                var mdTaxSlabDetail = _mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
+                var mdTaxSlabDetail = Mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
 
                 mdTaxSlabDetail.Id = taxSlabDetailsId + index++;
                 mdTaxSlabDetail.TaxSlabId = mdTaxSlab.Id;
@@ -94,8 +93,8 @@ namespace MongoDataAccess.Repository
         private int UpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
         {
             // first update taxSlab
-            var mdTaxSlab = _mapper.Map<MdTaxSlab>(taxSlab);
-            mdTaxSlab._id = new ObjectId(this._taxSlab.FirstOrDefault(x => x.Id == taxSlab.Id)._id.ToString());
+            var mdTaxSlab = Mapper.Map<MdTaxSlab>(taxSlab);
+            mdTaxSlab._id = new ObjectId(this.TaxSlab.FirstOrDefault(x => x.Id == taxSlab.Id)._id.ToString());
 
             _mongoDbContext.TaxSlab.ReplaceOneAsync(s => s.Id == mdTaxSlab.Id, mdTaxSlab);
 
@@ -103,7 +102,7 @@ namespace MongoDataAccess.Repository
             // delete taxSlabDetails from database which are not passed by user
             var slabDetails = taxSlabDetails as TaxSlabDetail[] ?? taxSlabDetails.ToArray();
             var ids = new HashSet<int>(slabDetails.Select(x => x.Id));
-            var results = this._taxSlabDetails.Where(x => !ids.Contains(x.Id) && x.TaxSlabId == mdTaxSlab.Id);
+            var results = this.TaxSlabDetails.Where(x => !ids.Contains(x.Id) && x.TaxSlabId == mdTaxSlab.Id);
 
             foreach (var mdTaxSlabDetail in results)
             {
@@ -111,24 +110,24 @@ namespace MongoDataAccess.Repository
             }
 
             // taxSlabDetails update or insert.
-            var taxSlabDetailsId = this._taxSlabDetails.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
+            var taxSlabDetailsId = this.TaxSlabDetails.OrderByDescending(a => a.Id).FirstOrDefault()?.Id ?? 0;
             var index = 1;
             foreach (var taxSlabDetail in slabDetails)
             {
                 if (taxSlabDetail.Id == -1)
                 {
                     // Insert new entry in database
-                    var mdTaxSlabDetail = _mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
+                    var mdTaxSlabDetail = Mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
                     mdTaxSlabDetail.Id = taxSlabDetailsId + index++;
                     mdTaxSlabDetail.TaxSlabId = mdTaxSlab.Id;
 
                     _mongoDbContext.TaxSlabDetails.InsertOneAsync(mdTaxSlabDetail);
                 }
-                else if (this._taxSlabDetails.Any(det => det.Id == taxSlabDetail.Id))
+                else if (this.TaxSlabDetails.Any(det => det.Id == taxSlabDetail.Id))
                 {
                     // taxSlabDetail exist in database so update it
-                    var mdTaxSlabDetail = _mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
-                    mdTaxSlabDetail._id = new ObjectId(this._taxSlabDetails.FirstOrDefault(x => x.Id == taxSlabDetail.Id)._id.ToString());
+                    var mdTaxSlabDetail = Mapper.Map<MdTaxSlabDetail>(taxSlabDetail);
+                    mdTaxSlabDetail._id = new ObjectId(this.TaxSlabDetails.FirstOrDefault(x => x.Id == taxSlabDetail.Id)._id.ToString());
                     mdTaxSlabDetail.TaxSlabId = mdTaxSlab.Id;
 
                     _mongoDbContext.TaxSlabDetails.ReplaceOne(s => s.Id == mdTaxSlabDetail.Id, mdTaxSlabDetail);
