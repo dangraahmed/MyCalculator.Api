@@ -1,3 +1,3 @@
-copy /y "D:\MyWork\RND\AngularJS\MyCalculator.Api\src\MongoDataAccess\bin\Debug\netstandard1.6\MongoDataAccess.dll", "D:\MyWork\RND\AngularJS\MyCalculator.Api\src\Api\bin\Debug\netcoreapp1.0"
-REM copy /y "C:\Users\ahmed.dangra\.nuget\packages\System.Data.SqlClient\4.1.0\runtimes\win\lib\netstandard1.3\System.Data.SqlClient.dll", "D:\MyWork\RND\AngularJS\MyCalculator.Api\src\Api\bin\Debug\netcoreapp1.0"
-REM copy /y "C:\Users\ahmed.dangra\.nuget\packages\System.Data.Common\4.0.1-rc2-24027\lib\netstandard1.0\System.Data.Common.dll", "D:\MyWork\RND\AngularJS\MyCalculator.Api\src\Api\bin\Debug\netcoreapp1.0"
+set projectDirectory=%1
+
+copy /y "%projectDirectory%\bin\Debug\netstandard1.6\MongoDataAccess.dll", "%projectDirectory%\..\Api\bin\Debug\netcoreapp1.0"

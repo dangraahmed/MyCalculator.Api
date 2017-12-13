@@ -15,6 +15,6 @@
   },
 
   "scripts": {
-    "postcompile": "copyDll.bat"
+    "postcompile": "copyDll.bat %project:Directory%"
   }
 }
