@@ -1,6 +1,6 @@
-dotnet build src\Core
-dotnet build src\BusinessLogic
-dotnet build src\Dto
-dotnet build src\Api
-dotnet build src\SQLDataAccess
-dotnet build src\MongoDataAccess
+dotnet build src\Core -c Release
+dotnet build src\BusinessLogic -c Release
+dotnet build src\Dto -c Release
+dotnet build src\Api -c Release
+dotnet build src\SQLDataAccess -c Release
+dotnet build src\MongoDataAccess -c Release
