@@ -1,4 +1,3 @@
-dotnet restore
 dotnet build src\Core
 dotnet build src\BusinessLogic
 dotnet build src\Dto
