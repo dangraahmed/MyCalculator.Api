@@ -1,3 +1,4 @@
+dotnet restore
 dotnet build src\Core -c Release
 dotnet build src\BusinessLogic -c Release
 dotnet build src\Dto -c Release
