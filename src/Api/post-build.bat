@@ -11,3 +11,4 @@ dotnet publish-iis --publish-folder %OutputPath% --framework %FullTargetFramewor
 
 copy /y "%OutputPath%\..\SQLDataAccess.dll", "%OutputPath%"
 copy /y "%OutputPath%\..\MongoDataAccess.dll", "%OutputPath%"
+copy /y "%OutputPath%\..\BusinessLogic.dll", "%OutputPath%"
