@@ -107,7 +107,7 @@ namespace Api.Controllers
                     return retTaxSlabViewModel;
                 }
             }
-            catch (Exception es)
+            catch (Exception)
             {
                 throw;
             }
