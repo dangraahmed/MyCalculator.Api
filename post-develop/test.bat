@@ -1,1 +1,1 @@
-dotnet test test\ApiTest\
+dotnet test -c Release test\ApiTest\
