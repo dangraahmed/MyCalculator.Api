@@ -246,3 +246,5 @@ ModelManifest.xml
 
 #MyCalculator.UI Folder
 MyCalculator.UI/
+src/Api/Properties/PublishProfiles/Api-publish.ps1
+src/Api/Properties/PublishProfiles/publish-module.psm1
