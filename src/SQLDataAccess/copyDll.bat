@@ -1,3 +1,4 @@
 set projectDirectory=%1
+set buildType=%2
 
-copy /y "%projectDirectory%\bin\Debug\netstandard1.6\SQLDataAccess.dll", "%projectDirectory%\..\Api\bin\Debug\netcoreapp1.0"
+copy /y "%projectDirectory%\bin\%buildType%\netstandard1.6\SQLDataAccess.dll", "%projectDirectory%\..\Api\bin\%buildType%\netcoreapp1.0"

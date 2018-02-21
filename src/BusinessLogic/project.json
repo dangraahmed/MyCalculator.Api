@@ -13,6 +13,6 @@
   },
 
   "scripts": {
-    "postcompile": "copyDll.bat %project:Directory%"
+    "postcompile": "copyDll.bat %project:Directory% %compile:Configuration%"
   }
 }
