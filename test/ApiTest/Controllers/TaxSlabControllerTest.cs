@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api;
@@ -22,6 +23,13 @@ namespace ApiTest.Controllers
         {
             dataModelRepositoryTest = new TaxSlabRepositoryTestImp();
             SetUpTest();
+        }
+
+        [Fact]
+        public void CheckTaxSlabControllerGaurdClause()
+        {
+            // Act
+            Assert.Throws<ArgumentNullException>(() => new TaxSlabController(null, null));
         }
 
         [Fact]
