@@ -158,18 +158,11 @@ namespace ApiTest.Controllers
 
             var featuredTaxSlabViewModel = GetFeaturedTaxSlabViewModelData(-1);
 
-            // TODO: -- have to remove this  code (from here)
-            // TODO: refactoring required remove duplicate code
-            TaxSlab taxSlabViewModel = new TaxSlab();
-            taxSlabViewModel.Id = featuredTaxSlabViewModel.Id;
-            taxSlabViewModel.FromYear = featuredTaxSlabViewModel.FromYear;
-            taxSlabViewModel.ToYear = featuredTaxSlabViewModel.ToYear;
-            taxSlabViewModel.Category = featuredTaxSlabViewModel.Category;
-            IList<TaxSlabDetail> okok = Mapper.Map<IList<TaxSlabDetail>>(featuredTaxSlabViewModel.TaxSlabDetail);
-            // TODO: -- have to remove this code (till here)
+            mockTaxSlabBL.Setup(repo => repo.GetTaxSlabDetail(It.IsAny<int>()))
+                .Returns(dataModelRepositoryTest.GetTaxSlabDetail(It.IsAny<int>())); // TODO: -- have to remove this code from here
 
-            mockTaxSlabBL.Setup(repo => repo.GetTaxSlabDetail(It.IsAny<int>())).Returns(dataModelRepositoryTest.GetTaxSlabDetail(It.IsAny<int>())); // TODO: -- have to remove this code from here
-            mockTaxSlabBL.Setup(repo => repo.InsertUpdateTaxSlab(It.IsAny<TaxSlab>(), It.IsAny<IList<TaxSlabDetail>>())).Returns(dataModelRepositoryTest.InsertUpdateTaxSlab(taxSlabViewModel, okok));
+            mockTaxSlabBL.Setup(repo => repo.InsertUpdateTaxSlab(It.IsAny<TaxSlab>(), It.IsAny<IList<TaxSlabDetail>>()))
+                .Returns(dataModelRepositoryTest.InsertUpdateTaxSlab(Mapper.Map<TaxSlab>(featuredTaxSlabViewModel), Mapper.Map<IList<TaxSlabDetail>>(featuredTaxSlabViewModel.TaxSlabDetail)));
 
             // Act
             var result = controller.InsertUpdateTaxSlab(featuredTaxSlabViewModel);
