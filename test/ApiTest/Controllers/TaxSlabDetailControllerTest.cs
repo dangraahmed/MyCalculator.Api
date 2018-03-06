@@ -58,9 +58,9 @@ namespace ApiTest.Controllers
 
         [Theory]
         [InlineData(1, 4), TestPriority(2)]
-        [InlineData(2, 5)]
-        [InlineData(3, 6)]
-        [InlineData(4, 7)]
+        //[InlineData(2, 5)]
+        //[InlineData(3, 6)]
+        //[InlineData(4, 7)]
         public void ListTaxSlabDetailTestForValidSlabId(int taxSlabId, int taxSlabDetailCount)
         {
             //Arrange
@@ -74,6 +74,21 @@ namespace ApiTest.Controllers
             Assert.IsType<FeaturedTaxSlabDetailListViewModel>(result);
             Assert.IsType<List<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
             Assert.IsAssignableFrom<IEnumerable<TaxSlabDetailViewModel>>(result.TaxSlabDetail);
+
+            Assert.Equal("", result.TaxSlabDetail[0].SSlabFromAmount);
+            Assert.Equal("101", result.TaxSlabDetail[1].SSlabFromAmount);
+            Assert.Equal("", result.TaxSlabDetail[result.TaxSlabDetail.Count - 1].SSlabToAmount);
+            Assert.Equal("300", result.TaxSlabDetail[result.TaxSlabDetail.Count - 2].SSlabToAmount);
+
+            Assert.Equal("Income upto Rs. 100", result.TaxSlabDetail[0].Slab);
+            Assert.Equal("Income between Rs. 201 - 300", result.TaxSlabDetail[result.TaxSlabDetail.Count - 2].Slab);
+            Assert.Equal("Income above Rs. 301", result.TaxSlabDetail[result.TaxSlabDetail.Count - 1].Slab);
+
+            result.TaxSlabDetail[result.TaxSlabDetail.Count - 1].SlabFromAmount = null;
+            result.TaxSlabDetail[result.TaxSlabDetail.Count - 1].SlabToAmount = null;
+
+            Assert.Null(result.TaxSlabDetail[result.TaxSlabDetail.Count - 1].Slab);
+
             Assert.Equal(taxSlabDetailCount, result.TaxSlabDetail.Count());
 
             foreach (var taxSlabDetail in result.TaxSlabDetail)
@@ -161,6 +176,13 @@ namespace ApiTest.Controllers
 
             // Asser Result
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void InsertTaxSlabInvalidTest()
+        {
+            // Asser Result
+            Assert.IsType(typeof(NullReferenceException), Record.Exception(() => controller.InsertUpdateTaxSlab(null)));
         }
 
         #region private method
