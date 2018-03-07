@@ -15,6 +15,7 @@ namespace Api
             CreateMap<TaxSlab, TaxSlabViewModel>();
             CreateMap<TaxSlabDetail, TaxSlabDetailViewModel>();
             CreateMap<UserMaster, UserMasterViewModel>();
+            CreateMap<TaxSlab, FeaturedTaxSlabViewModel>();
         }
     }
 
@@ -25,6 +26,7 @@ namespace Api
             CreateMap<TaxSlabViewModel, TaxSlab>();
             CreateMap<TaxSlabDetailViewModel, TaxSlabDetail>();
             CreateMap<UserMasterViewModel, UserMaster>();
+            CreateMap<FeaturedTaxSlabViewModel, TaxSlab>();
         }
     }
 }

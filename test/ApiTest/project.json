@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "buildOptions": {
     "debugType": "portable"
@@ -9,7 +9,8 @@
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Moq": "4.7.1",
     "Api": "1.0.0-*",
-    "OpenCover": "4.6.519"
+    "OpenCover": "4.6.519",
+    "ReportGenerator": "3.1.2"
   },
   "testRunner": "xunit",
   "frameworks": {

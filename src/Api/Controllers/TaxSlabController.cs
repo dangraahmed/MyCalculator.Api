@@ -79,16 +79,7 @@ namespace Api.Controllers
         {
             try
             {
-                // TODO: -- have to remove this  code (from here)
-                // TODO: refactoring required remove duplicate code
-                TaxSlabViewModel taxSlabViewModel = new TaxSlabViewModel();
-                taxSlabViewModel.Id = featuredTaxSlabViewModel.Id;
-                taxSlabViewModel.FromYear = featuredTaxSlabViewModel.FromYear;
-                taxSlabViewModel.ToYear = featuredTaxSlabViewModel.ToYear;
-                taxSlabViewModel.Category = featuredTaxSlabViewModel.Category;
-                // TODO: -- have to remove this code (till here)
-
-                int taxSlabId = _taxSlabBL.InsertUpdateTaxSlab(_mapper.Map<TaxSlab>(taxSlabViewModel)
+                int taxSlabId = _taxSlabBL.InsertUpdateTaxSlab(_mapper.Map<TaxSlab>(featuredTaxSlabViewModel)
                                                     , _mapper.Map<IList<TaxSlabDetail>>(featuredTaxSlabViewModel.TaxSlabDetail));
                 {
                     var taxSlab = _mapper.Map<TaxSlabViewModel>(_taxSlabBL.GetTaxSlabs().FirstOrDefault(slab => slab.Id == taxSlabId));
