@@ -16,6 +16,7 @@ namespace ApiTest.Controllers
     {
         private UserRepositoryTestImp dataModelRepositoryTest;
         private Mock<IUserBL> mockUserBL;
+        private Mock<ITokenAuthOptionWrapper> mockTokenAuthOption;
         private TokenAuthController controller;
 
         public TokenAuthControllerTest()
@@ -28,32 +29,31 @@ namespace ApiTest.Controllers
         public void CheckTokenAuthControllerGaurdClause()
         {
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => new TokenAuthController(null));
+            Assert.Throws<ArgumentNullException>(() => new TokenAuthController(null, null));
         }
 
         [Fact]
         public void GetAuthTokenTestForValidUser()
         {
             //Arrange
-            //UserMasterViewModel userMasterViewModel = new UserMasterViewModel()
-            //{
-            //    UserId = "a",
-            //    UserPassword = "s"
-            //};
+            UserMasterViewModel userMasterViewModel = new UserMasterViewModel()
+            {
+                UserId = "a",
+                UserPassword = "s"
+            };
 
-            //Mock<TokenAuthOption> mockTokenAuthOption = new Mock<TokenAuthOption>();
-            //mockTokenAuthOption.Setup();
-            ////mockTokenAuthOption.Setup(rep => rep.Audience).Returns("ExampleAudience");
-            ////mockTokenAuthOption.Setup(rep => rep.Issuer).Returns("ExampleIssuer");
-            ////mockTokenAuthOption.Setup(rep => rep.SigningCredentials).Returns(new SigningCredentials(new RsaSecurityKey(RSAKeyHelper.GenerateKey()), SecurityAlgorithms.RsaSha256Signature));
-            ////mockTokenAuthOption.Setup(rep => rep.ExpiresSpan).Returns(TimeSpan.FromSeconds(6000));
-            ////mockTokenAuthOption.Setup(rep => rep.TokenType).Returns("Bearer");
+
+            mockTokenAuthOption.Setup(rep => rep.Audience).Returns("ExampleAudience");
+            mockTokenAuthOption.Setup(rep => rep.Issuer).Returns("ExampleIssuer");
+            mockTokenAuthOption.Setup(rep => rep.SigningCredentials).Returns(new SigningCredentials(new RsaSecurityKey(RSAKeyHelper.GenerateKey()), SecurityAlgorithms.RsaSha256Signature));
+            mockTokenAuthOption.Setup(rep => rep.ExpiresSpan).Returns(TimeSpan.FromSeconds(6000));
+            mockTokenAuthOption.Setup(rep => rep.TokenType).Returns("Bearer");
 
             //// Act
-            //var tokenValue = controller.GetAuthToken(userMasterViewModel);
+            var tokenValue = controller.GetAuthToken(userMasterViewModel);
 
             //// Asser Result
-            //Assert.Equal("Username or password is invalid", tokenValue);
+            Assert.Contains("Bearer", tokenValue);
         }
 
         [Fact]
@@ -78,8 +78,9 @@ namespace ApiTest.Controllers
         {
             //Arrange
             mockUserBL = new Mock<IUserBL>();
+            mockTokenAuthOption = new Mock<ITokenAuthOptionWrapper>();
             mockUserBL.Setup(repo => repo.GetUsers()).Returns(dataModelRepositoryTest.GetUsers());
-            controller = new TokenAuthController(mockUserBL.Object);
+            controller = new TokenAuthController(mockUserBL.Object, mockTokenAuthOption.Object);
         }
 
         #endregion

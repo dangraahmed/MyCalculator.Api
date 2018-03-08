@@ -23,8 +23,8 @@ namespace Api.Controllers
     public class TokenAuthController : Controller
     {
         private readonly IUserBL _UserBL;
-
-        public TokenAuthController(IUserBL userBL)
+        private readonly ITokenAuthOptionWrapper _TokenAuthOptionWrapper;
+        public TokenAuthController(IUserBL userBL, ITokenAuthOptionWrapper tokenAuthOptionWrapper)
         {
             if (userBL == null)
             {
@@ -32,6 +32,7 @@ namespace Api.Controllers
             }
 
             _UserBL = userBL;
+            _TokenAuthOptionWrapper = tokenAuthOptionWrapper;
         }
 
         [Route("okok")]
@@ -45,11 +46,11 @@ namespace Api.Controllers
         public string GetAuthToken([FromBody]UserMasterViewModel userMaster)
         {
             var existUser = _UserBL.GetUsers().FirstOrDefault(u => u.UserName == userMaster.UserId && u.UserPassword == userMaster.UserPassword);
-
+            
             if (existUser != null)
             {
                 var requestAt = DateTime.Now;
-                var expiresIn = requestAt + TokenAuthOption.ExpiresSpan;
+                var expiresIn = requestAt + _TokenAuthOptionWrapper.ExpiresSpan;
                 var token = GenerateToken(existUser, expiresIn);
 
                 var settings = new JsonSerializerSettings
@@ -63,8 +64,8 @@ namespace Api.Controllers
                     Data = new RequestResultData()
                     {
                         RequertAt = requestAt,
-                        ExpiresIn = TokenAuthOption.ExpiresSpan.TotalSeconds,
-                        TokeyType = TokenAuthOption.TokenType,
+                        ExpiresIn = _TokenAuthOptionWrapper.ExpiresSpan.TotalSeconds,
+                        TokeyType = _TokenAuthOptionWrapper.TokenType,
                         AccessToken = token
                     }
                 }, settings);
@@ -92,9 +93,9 @@ namespace Api.Controllers
 
             var securityToken = handler.CreateToken(new SecurityTokenDescriptor
             {
-                Issuer = TokenAuthOption.Issuer,
-                Audience = TokenAuthOption.Audience,
-                SigningCredentials = TokenAuthOption.SigningCredentials,
+                Issuer = _TokenAuthOptionWrapper.Issuer,
+                Audience = _TokenAuthOptionWrapper.Audience,
+                SigningCredentials = _TokenAuthOptionWrapper.SigningCredentials,
                 Subject = identity,
                 Expires = expires
             });

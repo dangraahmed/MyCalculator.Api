@@ -65,6 +65,8 @@ namespace Api
             services.AddSingleton(AutoMapperConfiguration());
             services.AddMvc();
 
+            services.AddTransient<ITokenAuthOptionWrapper>(provider => new TokenAuthOptionWrapper());
+
             var builder = DependencyInjectionAutowired();
 
             builder.Populate(services);
@@ -124,7 +126,6 @@ namespace Api
             var builder = new ContainerBuilder();
 
             // For Repository
-            //services.AddTransient<IUserRepository>(provider=> new SqlRepository(Configuration.GetSection("ConnectionString").Value));
             var assembly = Assembly.Load(new AssemblyName(ConfigValue.RepositoryAssembly));
 
             builder.RegisterAssemblyTypes(assembly)
