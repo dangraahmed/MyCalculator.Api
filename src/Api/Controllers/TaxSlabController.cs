@@ -1,38 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Dto.Object;
-using Dto.Common;
-using Core;
-using Core.Model;
 using Core.Interface;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Core.Model;
+using Dto.Object;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
     [Route("[controller]")]
     public class TaxSlabController : Controller
     {
-
         private readonly ITaxSlabBL _taxSlabBL;
         private readonly IMapper _mapper;
 
         public TaxSlabController(ITaxSlabBL taxSlabBL, IMapper mapper)
         {
-            if (taxSlabBL == null)
-            {
-                throw new ArgumentNullException(nameof(taxSlabBL));
-            }
-
-            _taxSlabBL = taxSlabBL;
-            _mapper = mapper;
+            _taxSlabBL = taxSlabBL ?? throw new ArgumentNullException(nameof(taxSlabBL));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet()]
-        //[Auth.Authorize()]
         [Route("listTaxSlabs")]
         public FeaturedTaxSlabListViewModel ListTaxSlabs()
         {

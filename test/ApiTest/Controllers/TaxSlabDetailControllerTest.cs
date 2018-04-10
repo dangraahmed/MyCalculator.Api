@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Api;
+using Api.Common;
 using Api.Controllers;
 using ApiTest.Common;
 using AutoMapper;
@@ -184,6 +185,7 @@ namespace ApiTest.Controllers
             //Arrange
             mockTaxSlabBL = new Mock<ITaxSlabBL>();
             mockTaxSlabBL.Setup(repo => repo.GetTaxSlabs()).Returns(dataModelRepositoryTest.GetTaxSlabs());
+            Mapper.Reset();
             Mapper.Initialize(m =>
             {
                 m.AddProfile<CoreToDto>();

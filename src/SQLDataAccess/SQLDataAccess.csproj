@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.3" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo ConfigurationName $(ConfigurationName)&#xD;&#xA;echo OutDir $(OutDir)&#xD;&#xA;echo DevEnvDir $(DevEnvDir)&#xD;&#xA;echo PlatformName $(PlatformName)&#xD;&#xA;echo ProjectDir $(ProjectDir)&#xD;&#xA;echo ProjectPath $(ProjectPath)&#xD;&#xA;echo ProjectName $(ProjectName)&#xD;&#xA;echo ProjectFileName $(ProjectFileName)&#xD;&#xA;echo ProjectExt $(ProjectExt)&#xD;&#xA;echo SolutionDir $(SolutionDir)&#xD;&#xA;echo SolutionPath $(SolutionPath)&#xD;&#xA;echo SolutionName $(SolutionName)&#xD;&#xA;echo SolutionFileName $(SolutionFileName)&#xD;&#xA;echo SolutionExt $(SolutionExt)&#xD;&#xA;echo TargetDir $(TargetDir)&#xD;&#xA;echo TargetPath $(TargetPath)&#xD;&#xA;echo TargetName $(TargetName)&#xD;&#xA;echo TargetFileName $(TargetFileName)&#xD;&#xA;echo TargetExt $(TargetExt)&#xD;&#xA;copy /y $(TargetPath), $(SolutionDir)\src\Api\$(OutDir)" />
+  </Target>
+
+</Project>
