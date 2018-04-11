@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /y $(TargetPath), $(SolutionDir)\src\Api\$(OutDir)" />
+    <Exec Command="copy /y $(TargetPath), $(ProjectDir)..\..\src\Api\$(OutDir)" />
   </Target>
 
 </Project>
