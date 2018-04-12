@@ -1,16 +1,16 @@
-mkdir "..\test\ApiTest\CodeCoverage"
+mkdir "test\ApiTest\CodeCoverage"
 
 %userprofile%\.nuget\packages\OpenCover\4.6.519\tools\OpenCover.Console.exe ^
     -target:"%ProgramFiles%\dotnet\dotnet.exe" ^
-    -targetargs:"test ..\test\ApiTest" ^
+    -targetargs:"test test\ApiTest\ApiTest.csproj" ^
     -register:user ^
-    -filter:"+[*]* -[xunit*]*" ^
-    -output:"..\test\ApiTest\CodeCoverage\ApiTest.xml"^
+    -filter:"+[*]* -[xunit*]* -[Moq*]*" ^
+    -output:"test\ApiTest\CodeCoverage\ApiTest.xml"^
     -oldStyle
 
 %userprofile%\.nuget\packages\ReportGenerator\3.1.2\tools\ReportGenerator.exe ^
-    -reports:"..\test\ApiTest\CodeCoverage\ApiTest.xml" ^
-    -targetdir:"..\test\ApiTest\CodeCoverage"
+    -reports:"test\ApiTest\CodeCoverage\ApiTest.xml" ^
+    -targetdir:"test\ApiTest\CodeCoverage"
 
-start "report" "..\test\ApiTest\CodeCoverage\index.htm"
+start "report" "test\ApiTest\CodeCoverage\index.htm"
 cls
