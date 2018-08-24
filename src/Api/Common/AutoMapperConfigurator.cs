@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Core.Model;
 using Dto.Object;
 
-namespace Api
+namespace Api.Common
 {
     public class CoreToDto : Profile
     {
@@ -15,6 +11,7 @@ namespace Api
             CreateMap<TaxSlab, TaxSlabViewModel>();
             CreateMap<TaxSlabDetail, TaxSlabDetailViewModel>();
             CreateMap<UserMaster, UserMasterViewModel>();
+            CreateMap<TaxSlab, FeaturedTaxSlabViewModel>();
         }
     }
 
@@ -25,6 +22,7 @@ namespace Api
             CreateMap<TaxSlabViewModel, TaxSlab>();
             CreateMap<TaxSlabDetailViewModel, TaxSlabDetail>();
             CreateMap<UserMasterViewModel, UserMaster>();
+            CreateMap<FeaturedTaxSlabViewModel, TaxSlab>();
         }
     }
 }

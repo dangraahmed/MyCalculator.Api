@@ -76,7 +76,7 @@ namespace SQLDataAccess.Repository
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -162,7 +162,7 @@ namespace SQLDataAccess.Repository
                 }
                 return taxSlabId;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return 0;
             }

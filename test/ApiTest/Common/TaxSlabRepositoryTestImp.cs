@@ -17,6 +17,9 @@ namespace ApiTest.Common
         {
             TaxSlabTestData = GetTaxSlabsTestData();
             TaxSlabDetailTestData = GetTaxSlabDetailTestData();
+
+            //TaxSlabTestData = new List<TaxSlab>();
+            //TaxSlabDetailTestData = new List<TaxSlabDetail>();
         }
 
         #region Interface ITaxSlabRepository
@@ -46,7 +49,24 @@ namespace ApiTest.Common
 
         public int InsertUpdateTaxSlab(TaxSlab taxSlab, IEnumerable<TaxSlabDetail> taxSlabDetails)
         {
-            throw new NotImplementedException();
+            if (taxSlab.Id == -1)
+            {
+                taxSlab.Id = TaxSlabTestData.Max(ts => ts.Id) + 1;
+                TaxSlabTestData.Add(taxSlab);
+                TaxSlabDetailTestData.AddRange(taxSlabDetails);
+            }
+            else
+            {
+                var obj = TaxSlabTestData.FirstOrDefault(ts => ts.Id == taxSlab.Id);
+                if (obj != null)
+                {
+                    obj = taxSlab;
+                    //var index = TaxSlabTestData.Select((ts, ind) => new { Index = ind }).FirstOrDefault().Index;
+                    //TaxSlabTestData[index] = taxSlab;
+                }
+            }
+
+            return taxSlab.Id;
         }
 
         #endregion
