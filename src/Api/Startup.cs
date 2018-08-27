@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Text;
 using System.Threading.Tasks;
 using Api.Common;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Core.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Api
 {
@@ -32,11 +35,27 @@ namespace Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(AutoMapperConfiguration());
-            services.AddMvc();
 
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                                                                       .AllowAnyMethod()
                                                                        .AllowAnyHeader()));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                };
+            });
+
+            services.AddMvc();
 
             var builder = DependencyInjectionAutowired();
             builder.Populate(services);
@@ -52,6 +71,7 @@ namespace Api
                 app.UseDeveloperExceptionPage();
             }
             app.UseCors("AllowAll");
+            app.UseAuthentication();
             app.UseMvc();
         }
 
@@ -61,7 +81,7 @@ namespace Api
 
             // For Repository
             //services.AddTransient<IUserRepository>(provider=> new SqlRepository(Configuration.GetSection("ConnectionString").Value));
-            
+
             var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath($@"{AppDomain.CurrentDomain.BaseDirectory}\{Configuration.GetSection("RepositoryAssembly").Value}.dll");
 
             builder.RegisterAssemblyTypes(assembly)

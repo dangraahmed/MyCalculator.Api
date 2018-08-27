@@ -6,6 +6,7 @@ using AutoMapper;
 using Core.Interface;
 using Core.Model;
 using Dto.Object;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,7 @@ namespace Api.Controllers
         }
 
         [HttpGet()]
+        [Authorize]
         [Route("listTaxSlabs")]
         public FeaturedTaxSlabListViewModel ListTaxSlabs()
         {
