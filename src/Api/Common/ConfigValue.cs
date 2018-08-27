@@ -41,38 +41,6 @@ namespace Api.Common
             }
         }
 
-        public static class TokenAuthOption
-        {
-            public static string Audience
-            {
-                get
-                {
-                    return GetConfigValue("TokenAuthOption:Audience");
-                }
-            }
-            public static string Issuer
-            {
-                get
-                {
-                    return GetConfigValue("TokenAuthOption:Issuer");
-                }
-            }
-            public static int ExpiresSpan
-            {
-                get
-                {
-                    return Convert.ToInt32(GetConfigValue("TokenAuthOption:ExpiresSpan"));
-                }
-            }
-            public static string TokenType
-            {
-                get
-                {
-                    return GetConfigValue("TokenAuthOption:TokenType");
-                }
-            }
-        }
-
         private static string GetConfigValue(string configKey)
         {
             return Configuration.GetSection(configKey).Value;
