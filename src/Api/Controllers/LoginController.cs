@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Model;
@@ -12,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Api.Controllers
 {
+    [RequireHttps]
     [Route("[controller]")]
     public class LoginController : Controller
     {
@@ -47,15 +49,31 @@ namespace Api.Controllers
             return new string[] { "value1", "value2", "value3", "value4", "value5" };
         }
 
+        [HttpGet]
+        [Route("GetTestOne")]
+        public string[] GetTestOne()
+        {
+            return new string[] { "value1", "value2", "value3", "value4", "value5" };
+        }
+
         private string GenerateJSONWebToken(UserMaster userInfo)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"], _config["Jwt:Issuer"],
-              null,
-              expires: DateTime.Now.AddMinutes(120),
-              signingCredentials: credentials);
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, "userInfo.Username"),
+                new Claim(JwtRegisteredClaimNames.Email, "userInfo.EmailAddress"),
+                new Claim("DateOfJoing", DateTime.Now.ToString("yyyy-MM-dd")),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+                _config["Jwt:Issuer"],
+                null,
+                expires: DateTime.Now.AddMinutes(120),
+                signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
