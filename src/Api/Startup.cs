@@ -61,8 +61,17 @@ namespace Api
 
             // For Repository
             //services.AddTransient<IUserRepository>(provider=> new SqlRepository(Configuration.GetSection("ConnectionString").Value));
-            
-            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath($@"{AppDomain.CurrentDomain.BaseDirectory}\{Configuration.GetSection("RepositoryAssembly").Value}.dll");
+
+            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath($@"{AppDomain.CurrentDomain.BaseDirectory}\MongoDB.Bson.dll");
+            builder.RegisterAssemblyTypes(assembly);
+
+            assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath($@"{AppDomain.CurrentDomain.BaseDirectory}\MongoDB.Driver.Core.dll");
+            builder.RegisterAssemblyTypes(assembly);
+
+            assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath($@"{AppDomain.CurrentDomain.BaseDirectory}\MongoDB.Driver.dll");
+            builder.RegisterAssemblyTypes(assembly);
+
+            assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath($@"{AppDomain.CurrentDomain.BaseDirectory}\{Configuration.GetSection("RepositoryAssembly").Value}.dll");
 
             builder.RegisterAssemblyTypes(assembly)
                 .Where(t => t.Name.EndsWith("Repository", StringComparison.Ordinal))
