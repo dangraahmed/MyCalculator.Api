@@ -11,7 +11,7 @@ GO
 
 
 
-ALTER PROCEDURE [dbo].[proc_tax_slab_create]
+create PROCEDURE [dbo].[proc_tax_slab_create]
 	@from_year int,
 	@to_year int,
 	@category varchar(50),

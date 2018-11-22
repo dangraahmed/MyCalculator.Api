@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Core.Interface;
 using Core.Model;
 using Dto.Object;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -25,7 +22,6 @@ namespace Api.Controllers
         }
 
         [HttpGet()]
-        [Authorize]
         [Route("listTaxSlabs")]
         public FeaturedTaxSlabListViewModel ListTaxSlabs()
         {
@@ -42,7 +38,6 @@ namespace Api.Controllers
         }
 
         [HttpGet()]
-        //[Auth.Authorize()]
         [Route("listTaxSlabDetail/{id}")]
         public FeaturedTaxSlabDetailListViewModel ListTaxSlabDetail(int id)
         {
@@ -58,7 +53,6 @@ namespace Api.Controllers
         }
 
         [HttpPost()]
-        //[Auth.Authorize()]
         [Route("deleteTaxSlab/{id}")]
         public bool DeleteTaxSlab(int id)
         {
@@ -66,7 +60,6 @@ namespace Api.Controllers
         }
 
         [HttpPost()]
-        //[Auth.Authorize()]
         [Route("insertUpdateTaxSlab")]
         public FeaturedTaxSlabViewModel InsertUpdateTaxSlab([FromBody] FeaturedTaxSlabViewModel featuredTaxSlabViewModel)
         {
