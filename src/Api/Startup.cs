@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Loader;
+using System.Text;
 using Api.Common;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Core.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Api
 {
@@ -32,6 +35,26 @@ namespace Api
                                                                        .AllowAnyHeader()));
             services.AddMvc();
 
+            // configure jwt authentication (Started)
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("AhmedAminDangraSecretKey")),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+            // configure jwt authentication (Completed)
+
             var builder = DependencyInjectionAutowired();
             builder.Populate(services);
             var container = builder.Build();
@@ -46,6 +69,11 @@ namespace Api
                 app.UseDeveloperExceptionPage();
             }
             app.UseCors("AllowAll");
+
+            // configure jwt authentication (Started)
+            app.UseAuthentication();
+            // configure jwt authentication (Completed)
+
             app.UseMvc();
         }
 

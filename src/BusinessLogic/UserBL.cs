@@ -13,12 +13,7 @@ namespace BusinessLogic
 
         public UserBL(IUserRepository repository)
         {
-            if (repository == null)
-            {
-                throw new ArgumentNullException(nameof(repository));
-            }
-
-            _repository = repository;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         #region User Master
@@ -44,5 +39,10 @@ namespace BusinessLogic
         }
 
         #endregion
+
+        public UserMaster Authenticate(string userName, string password)
+        {
+            return this.GetUsers().SingleOrDefault(x => x.UserName == userName && x.UserPassword == password);
+        }
     }
 }
