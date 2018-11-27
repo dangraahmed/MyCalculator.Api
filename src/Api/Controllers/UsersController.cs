@@ -62,7 +62,7 @@ namespace Api.Controllers
                     new Claim(ClaimTypes.PostalCode, "400001"),
                     new Claim(ClaimTypes.DateOfBirth, DateTime.Now.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddSeconds(3),
+                Expires = DateTime.UtcNow.AddSeconds(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
