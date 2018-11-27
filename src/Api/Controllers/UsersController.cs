@@ -51,7 +51,7 @@ namespace Api.Controllers
         {
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("AhmedAminDangraSecretKey");
+            var key = Encoding.ASCII.GetBytes("AhmedAminDangraSecretKey"); //TODO: remove hardcoding
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -62,8 +62,10 @@ namespace Api.Controllers
                     new Claim(ClaimTypes.PostalCode, "400001"),
                     new Claim(ClaimTypes.DateOfBirth, DateTime.Now.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddSeconds(30),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                Expires = DateTime.UtcNow.AddSeconds(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = "http://localhost:56788/" //TODO: remove hardcoding
+
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);

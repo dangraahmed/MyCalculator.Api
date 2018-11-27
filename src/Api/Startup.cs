@@ -47,9 +47,27 @@ namespace Api
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
+
+                    /*
+                     The ValidateIssuerSigningKey and ValdiateIssuer properties indicate that the token’s signature should be validated 
+                     and that the key’s property indicating it’s issuer must match an expected value. 
+                     This is an alternate way to make sure the issuer is validated since we’re not using an Authority parameter in our 
+                     JwtBearerOptions (which would have implicitly checked that the JWT’s issuer matched the authority). 
+                     Instead, the JWT’s issuer is matched against custom values that are provided by the ValidIssuer or ValidIssuers properties of the TokenValidationParameters object.
+                     The IssuerSigningKey is the public key used for validating incoming JWT tokens. 
+                     By specifying a key here, the token can be validated without any need for the issuing server. 
+                     What is needed, instead, is the location of the public key. 
+                     The certLocation parameter in the sample above is a string pointing to a .cer certificate file containing the public key corresponding 
+                     to the private key used by the issuing authentication server. 
+                     Of course, this certificate could just as easily (and more likely) come from a certificate store instead of a file.
+                     */
+
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("AhmedAminDangraSecretKey")),
-                    ValidateIssuer = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("AhmedAminDangraSecretKey")), //TODO: remove hardcoding
+
+                    ValidateIssuer = true,
+                    ValidIssuer = "http://localhost:56788/", //TODO: remove hardcoding
+                    
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero

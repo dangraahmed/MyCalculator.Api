@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Hello jQuery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            startTesting();
+        });
+
+        function startTesting() {
+            $.ajax({
+                contentType: 'application/json',
+                type: "POST",
+                data: JSON.stringify({
+                    "UserName": "a",
+                    "UserPassword": "s"
+                }),
+                url: "http://localhost:56788/Users/authenticate",
+                success: function (data) {
+                    addLog('Token generated sucessfully');
+                    getAllUser(data.token)
+                },
+                error: function (returnval) {
+                    addLog("Error in getting token : " + returnval.responseText);
+                }
+            });
+        }
+
+        var callNo = 0;
+        function getAllUser(token) {
+            callNo++
+            $.ajax({
+                contentType: 'application/json',
+                type: "GET",
+                dataType: 'json',
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                url: "http://localhost:56788/Users/getAll",
+                success: function (data, textStatus, xhr) {
+                    $('#tblStatus tr:first').after('<tr><td>' + callNo + '</td><td>' + textStatus + '</td><td>' + xhr.status + '</td></tr>');
+                    addLog('Fetch data successfully');
+                    getAllUser(token);
+                },
+                error: function (returnval, textStatus, xhr) {
+                    $('#tblStatus tr:first').after('<tr><td>' + callNo + '</td><td>' + returnval.statusText + '</td><td>' + returnval.status + '</td></tr>');
+                    addLog('Error in fetching data : ' + returnval.statusText);
+                }
+            });
+        }
+
+        function addLog(msg) {
+            $('#tblLog tr:first').after('<tr><td>' + msg + '</td></tr>');
+        }
+    </script>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <td width="20%">
+                <table id="tblStatus" border="1" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>Sr.No.</td>
+                        <td>Status</td>
+                        <td>Status Code</td>
+                    </tr>
+                </table>
+            </td>
+            <td width="80%">
+                <table id="tblLog" border="1" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>Log</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
