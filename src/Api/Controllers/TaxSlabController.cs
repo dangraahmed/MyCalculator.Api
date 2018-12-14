@@ -5,10 +5,12 @@ using AutoMapper;
 using Core.Interface;
 using Core.Model;
 using Dto.Object;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     public class TaxSlabController : Controller
     {
@@ -25,6 +27,7 @@ namespace Api.Controllers
         [Route("listTaxSlabs")]
         public FeaturedTaxSlabListViewModel ListTaxSlabs()
         {
+            var ok = Request.Headers["Origin"];
             var vmTaxSlab = new FeaturedTaxSlabListViewModel();
 
             var taxSlabs = _taxSlabBL.GetTaxSlabs();

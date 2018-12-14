@@ -62,7 +62,7 @@ namespace Api.Controllers
                     new Claim(ClaimTypes.PostalCode, "400001"),
                     new Claim(ClaimTypes.DateOfBirth, DateTime.Now.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddSeconds(1),
+                Expires = DateTime.UtcNow.AddSeconds(100),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = "http://localhost:56788/" //TODO: remove hardcoding
 
