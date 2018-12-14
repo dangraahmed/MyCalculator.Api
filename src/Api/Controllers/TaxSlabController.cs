@@ -27,7 +27,6 @@ namespace Api.Controllers
         [Route("listTaxSlabs")]
         public FeaturedTaxSlabListViewModel ListTaxSlabs()
         {
-            var ok = Request.Headers["Origin"];
             var vmTaxSlab = new FeaturedTaxSlabListViewModel();
 
             var taxSlabs = _taxSlabBL.GetTaxSlabs();
