@@ -18,12 +18,12 @@
     },
     "Api": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "taxSlab/listTaxSlabs",
+      //"launchBrowser": true,
+      //"launchUrl": "taxSlab/listTaxSlabs",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:56792/"
+      "applicationUrl": "http://localhost:56788/"
     }
   }
 }

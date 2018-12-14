@@ -9,6 +9,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Core.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -38,6 +39,17 @@ namespace Api
                                                                       .AllowAnyMethod()
                                                                        .AllowAnyHeader()));
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = Configuration["Auth0:Domain"];
+                options.Audience = Configuration["Auth0:ApiIdentifier"];
+            });
+
             var builder = DependencyInjectionAutowired();
             builder.Populate(services);
             var container = builder.Build();
@@ -52,6 +64,7 @@ namespace Api
                 app.UseDeveloperExceptionPage();
             }
             app.UseCors("AllowAll");
+            app.UseAuthentication();
             app.UseMvc();
         }
 
